@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Category List</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div class="container">
+
+    <div class="top-bar">
+        <h1>Product Categories</h1>
+        <div>
+            <a class="btn btn-light" th:href="@{/products}">Back to Products</a>
+            <a class="btn btn-primary" th:href="@{/categories/add}">Add New Category</a>
+        </div>
+    </div>
+
+    <div th:if="${message}" class="alert success">
+        <span th:text="${message}"></span>
+    </div>
+
+    <div th:if="${error}" class="alert error">
+        <span th:text="${error}"></span>
+    </div>
+
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Category Name</th>
+            <th>Description</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr th:each="category : ${categories}">
+            <td th:text="${category.id}"></td>
+            <td th:text="${category.name}"></td>
+            <td th:text="${category.description}"></td>
+            <td>
+                <a class="btn btn-delete"
+                   th:href="@{/categories/delete/{id}(id=${category.id})}"
+                   onclick="return confirm('Are you sure you want to delete this category?')">
+                    Delete
+                </a>
+            </td>
+        </tr>
+
+        <tr th:if="${#lists.isEmpty(categories)}">
+            <td colspan="4" class="empty">No categories found.</td>
+        </tr>
+        </tbody>
+    </table>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Order Detail</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div class="container">
+
+    <div class="top-bar">
+        <div>
+            <h1>Order Detail #<span th:text="${order.id}"></span></h1>
+            <p>
+                Status:
+                <strong th:text="${order.orderStatus}"></strong>
+            </p>
+        </div>
+
+        <div>
+            <a class="btn btn-light" th:href="@{/orders}">Back to Orders</a>
+            <a class="btn btn-light" th:href="@{/products}">Products</a>
+            <a class="btn btn-delete" th:href="@{/logout}">Logout</a>
+        </div>
+    </div>
+
+    <div th:if="${message}" class="alert success">
+        <span th:text="${message}"></span>
+    </div>
+
+    <div th:if="${error}" class="alert error">
+        <span th:text="${error}"></span>
+    </div>
+
+    <div class="order-info">
+        <p><strong>Customer:</strong> <span th:text="${order.user.fullName}"></span></p>
+        <p><strong>Email:</strong> <span th:text="${order.user.email}"></span></p>
+        <p><strong>Order Date:</strong> <span th:text="${#temporals.format(order.orderDate, 'yyyy-MM-dd HH:mm')}"></span></p>
+        <p><strong>Shipping Address:</strong> <span th:text="${order.shippingAddress}"></span></p>
+        <p><strong>Payment Method:</strong> <span th:text="${order.payment.paymentMethod}"></span></p>
+        <p><strong>Payment Status:</strong> <span th:text="${order.payment.status}"></span></p>
+    </div>
+
+    <div th:if="${session.role == 'ADMIN'}" class="admin-status-box">
+        <h2>Update Order Status</h2>
+
+        <form th:action="@{/orders/update-status}" method="post" class="status-form">
+            <input type="hidden" name="orderId" th:value="${order.id}">
+
+            <select name="status">
+                <option value="PENDING" th:selected="${order.orderStatus == 'PENDING'}">PENDING</option>
+                <option value="CONFIRMED" th:selected="${order.orderStatus == 'CONFIRMED'}">CONFIRMED</option>
+                <option value="CANCELLED" th:selected="${order.orderStatus == 'CANCELLED'}">CANCELLED</option>
+            </select>
+
+            <button type="submit" class="btn btn-primary">Update Status</button>
+        </form>
+    </div>
+
+    <h2>Items</h2>
+
+    <table>
+        <thead>
+        <tr>
+            <th>Product</th>
+            <th>Code</th>
+            <th>Brand</th>
+            <th>Price at Purchase</th>
+            <th>Quantity</th>
+            <th>Subtotal</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr th:each="item : ${order.orderItems}">
+            <td th:text="${item.product.name}"></td>
+            <td th:text="${item.product.productCode}"></td>
+            <td th:text="${item.product.brand}"></td>
+            <td th:text="${item.priceAtPurchase}"></td>
+            <td th:text="${item.quantity}"></td>
+            <td th:text="${item.subtotal}"></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div class="cart-summary">
+        <h2>Total: $<span th:text="${order.totalAmount}"></span></h2>
+    </div>
+
+</div>
+
+</body>
+</html>

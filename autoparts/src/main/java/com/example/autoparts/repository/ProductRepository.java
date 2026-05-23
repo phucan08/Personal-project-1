@@ -1,0 +1,16 @@
+package com.example.autoparts.repository;
+
+import com.example.autoparts.entity.Product;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
+
+public interface ProductRepository extends JpaRepository<Product, Long> {
+
+    boolean existsByProductCode(String productCode);
+
+    List<Product> findByNameContainingIgnoreCaseOrProductCodeContainingIgnoreCase(
+            String nameKeyword,
+            String codeKeyword
+    );
+}

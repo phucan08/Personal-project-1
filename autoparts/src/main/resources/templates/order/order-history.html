@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Order History</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div class="container">
+
+    <div class="top-bar">
+        <div>
+            <h1 th:if="${session.role == 'USER'}">My Orders</h1>
+            <h1 th:if="${session.role == 'ADMIN'}">Manage Orders</h1>
+            <p th:if="${session.fullName != null}">
+                Welcome, <strong th:text="${session.fullName}"></strong>
+                (<span th:text="${session.role}"></span>)
+            </p>
+        </div>
+
+        <div>
+            <a th:if="${session.role == 'ADMIN'}"
+            class="btn btn-light"
+            th:href="@{/admin/dashboard}">
+                Dashboard
+            </a>
+
+            <a class="btn btn-light" th:href="@{/products}">Products</a>
+
+            <a th:if="${session.role == 'USER'}"
+                class="btn btn-primary"
+                th:href="@{/cart}">
+                My Cart
+            </a>
+
+            <a class="btn btn-delete" th:href="@{/logout}">Logout</a>
+        </div>
+    </div>
+
+    <div th:if="${message}" class="alert success">
+        <span th:text="${message}"></span>
+    </div>
+
+    <div th:if="${error}" class="alert error">
+        <span th:text="${error}"></span>
+    </div>
+
+    <table>
+        <thead>
+        <tr>
+            <th>Order ID</th>
+            <th th:if="${session.role == 'ADMIN'}">Customer</th>
+            <th>Date</th>
+            <th>Total</th>
+            <th>Status</th>
+            <th>Payment</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr th:each="order : ${orders}">
+            <td th:text="${order.id}"></td>
+
+            <td th:if="${session.role == 'ADMIN'}">
+                <span th:text="${order.user.fullName}"></span>
+                <br>
+                <small th:text="${order.user.email}"></small>
+            </td>
+
+            <td th:text="${#temporals.format(order.orderDate, 'yyyy-MM-dd HH:mm')}"></td>
+            <td th:text="${order.totalAmount}"></td>
+            <td th:text="${order.orderStatus}"></td>
+            <td th:text="${order.payment.paymentMethod}"></td>
+
+            <td>
+                <a class="btn btn-primary"
+                   th:href="@{/orders/{id}(id=${order.id})}">
+                    View Detail
+                </a>
+            </td>
+        </tr>
+
+        <tr th:if="${#lists.isEmpty(orders)}">
+            <td th:if="${session.role == 'USER'}" colspan="6" class="empty">No orders found.</td>
+            <td th:if="${session.role == 'ADMIN'}" colspan="7" class="empty">No orders found.</td>
+        </tr>
+        </tbody>
+    </table>
+
+</div>
+
+</body>
+</html>

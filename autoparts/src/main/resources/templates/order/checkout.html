@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Checkout</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div class="container">
+
+    <div class="top-bar">
+        <div>
+            <h1>Checkout</h1>
+            <p th:if="${session.fullName != null}">
+                Customer: <strong th:text="${session.fullName}"></strong>
+            </p>
+        </div>
+
+        <div>
+            <a class="btn btn-light" th:href="@{/cart}">Back to Cart</a>
+            <a class="btn btn-delete" th:href="@{/logout}">Logout</a>
+        </div>
+    </div>
+
+    <div th:if="${error}" class="alert error">
+        <span th:text="${error}"></span>
+    </div>
+
+    <h2>Order Summary</h2>
+
+    <table>
+        <thead>
+        <tr>
+            <th>Product</th>
+            <th>Code</th>
+            <th>Price</th>
+            <th>Quantity</th>
+            <th>Subtotal</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr th:each="item : ${cartItems}">
+            <td th:text="${item.product.name}"></td>
+            <td th:text="${item.product.productCode}"></td>
+            <td th:text="${item.product.price}"></td>
+            <td th:text="${item.quantity}"></td>
+            <td th:text="${item.subtotal}"></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div class="cart-summary">
+        <h2>Total: $<span th:text="${total}"></span></h2>
+    </div>
+
+    <form th:action="@{/orders/checkout}" method="post" class="checkout-form">
+
+        <div class="form-group">
+            <label>Shipping Address</label>
+            <textarea name="shippingAddress" placeholder="Enter your shipping address"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label>Payment Method</label>
+            <select name="paymentMethod">
+                <option th:value="${cashMethod}">Cash on Delivery</option>
+                <option th:value="${cardMethod}">Credit / Debit Card</option>
+                <option th:value="${bankMethod}">Bank Transfer</option>
+            </select>
+        </div>
+
+        <div class="button-row">
+            <button type="submit" class="btn btn-primary"
+                    onclick="return confirm('Confirm checkout?')">
+                Place Order
+            </button>
+
+            <a class="btn btn-light" th:href="@{/cart}">Cancel</a>
+        </div>
+
+    </form>
+
+</div>
+
+</body>
+</html>

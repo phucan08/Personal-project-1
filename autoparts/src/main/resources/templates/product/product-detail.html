@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Product Detail</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div class="container">
+
+    <div class="top-bar">
+        <div>
+            <h1 th:text="${product.name}">Product Detail</h1>
+            <p th:if="${session.fullName != null}">
+                Welcome, <strong th:text="${session.fullName}"></strong>
+                (<span th:text="${session.role}"></span>)
+            </p>
+        </div>
+
+        <div>
+            <a class="btn btn-light" th:href="@{/products}">Back to Products</a>
+
+            <a th:if="${session.role == 'USER'}"
+               class="btn btn-primary"
+               th:href="@{/cart/add/{id}(id=${product.id})}">
+                Add to Cart
+            </a>
+
+            <a th:if="${session.role == 'USER'}"
+               class="btn btn-secondary"
+               th:href="@{/reviews/add/{id}(id=${product.id})}">
+                Write Review
+            </a>
+
+            <a th:if="${session.fullName != null}"
+               class="btn btn-delete"
+               th:href="@{/logout}">
+                Logout
+            </a>
+        </div>
+    </div>
+
+    <div th:if="${message}" class="alert success">
+        <span th:text="${message}"></span>
+    </div>
+
+    <div th:if="${error}" class="alert error">
+        <span th:text="${error}"></span>
+    </div>
+
+    <div class="product-detail-box">
+        <div class="product-image-box">
+            <img th:if="${product.imageUrl != null and !product.imageUrl.isEmpty()}"
+                 th:src="${product.imageUrl}"
+                 alt="Product image">
+
+            <div th:unless="${product.imageUrl != null and !product.imageUrl.isEmpty()}"
+                 class="no-image">
+                No Image
+            </div>
+        </div>
+
+        <div class="product-info-box">
+            <p><strong>Code:</strong> <span th:text="${product.productCode}"></span></p>
+            <p><strong>Brand:</strong> <span th:text="${product.brand}"></span></p>
+
+            <p>
+                <strong>Category:</strong>
+                <span th:if="${product.category != null}" th:text="${product.category.name}"></span>
+                <span th:unless="${product.category != null}">No category</span>
+            </p>
+
+            <p><strong>Price:</strong> $<span th:text="${product.price}"></span></p>
+            <p><strong>Quantity:</strong> <span th:text="${product.quantity}"></span></p>
+
+            <p>
+                <strong>Status:</strong>
+                <span th:if="${product.available}" class="badge available">Available</span>
+                <span th:unless="${product.available}" class="badge out">Out of stock</span>
+            </p>
+
+            <p><strong>Description:</strong></p>
+            <p th:text="${product.description}"></p>
+        </div>
+    </div>
+
+    <h2>Customer Reviews</h2>
+
+    <div th:if="${#lists.isEmpty(reviews)}" class="empty review-empty">
+        No reviews yet.
+    </div>
+
+    <div th:each="review : ${reviews}" class="review-card">
+        <div class="review-header">
+            <strong th:text="${review.user.fullName}"></strong>
+            <span>
+                Rating:
+                <strong th:text="${review.rating}"></strong>/5
+            </span>
+        </div>
+
+        <p th:text="${review.comment}"></p>
+
+        <small th:text="${#temporals.format(review.createdAt, 'yyyy-MM-dd HH:mm')}"></small>
+    </div>
+
+</div>
+
+</body>
+</html>

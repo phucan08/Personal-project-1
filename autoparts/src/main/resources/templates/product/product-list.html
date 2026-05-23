@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Product List</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div class="container">
+
+    <div class="top-bar">
+        <div>
+            <h1>Auto Parts Products</h1>
+            <p th:if="${session.fullName != null}">
+                Welcome, <strong th:text="${session.fullName}"></strong>
+                (<span th:text="${session.role}"></span>)
+            </p>
+        </div>
+
+        <div>
+            <a th:if="${session.role == 'ADMIN'}"
+            class="btn btn-light"
+            th:href="@{/admin/dashboard}">
+                Dashboard
+            </a>
+
+            <a th:if="${session.role == 'ADMIN'}"
+                class="btn btn-light"
+                th:href="@{/categories}">
+                Manage Categories
+            </a>
+
+            <a th:if="${session.role == 'ADMIN'}"
+                class="btn btn-primary"
+            th:href="@{/products/add}">
+                Add New Product
+            </a>
+
+            <a th:if="${session.role == 'USER'}"
+                class="btn btn-primary"
+                th:href="@{/cart}">
+                My Cart
+            </a>
+
+            <a th:if="${session.role == 'USER'}"
+                class="btn btn-light"
+                th:href="@{/orders}">
+                My Orders
+            </a>
+
+            <a th:if="${session.fullName == null}"
+                class="btn btn-secondary"
+                th:href="@{/login}">
+                Login
+            </a>
+
+            <a th:if="${session.fullName != null}"
+                class="btn btn-delete"
+                th:href="@{/logout}">
+                Logout
+            </a>
+        </div>
+    </div>
+
+    <div th:if="${message}" class="alert success">
+        <span th:text="${message}"></span>
+    </div>
+
+    <div th:if="${error}" class="alert error">
+        <span th:text="${error}"></span>
+    </div>
+
+    <form class="search-box" th:action="@{/products}" method="get">
+        <input type="text" name="keyword" placeholder="Search by name or product code"
+               th:value="${keyword}">
+        <button type="submit" class="btn btn-secondary">Search</button>
+        <a th:href="@{/products}" class="btn btn-light">Reset</a>
+    </form>
+
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Code</th>
+            <th>Name</th>
+            <th>Brand</th>
+            <th>Category</th>
+            <th>Price</th>
+            <th>Quantity</th>
+            <th>Available</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr th:each="product : ${products}">
+            <td th:text="${product.id}"></td>
+            <td th:text="${product.productCode}"></td>
+            <td th:text="${product.name}"></td>
+            <td th:text="${product.brand}"></td>
+
+            <td>
+                <span th:if="${product.category != null}" th:text="${product.category.name}"></span>
+                <span th:unless="${product.category != null}">No category</span>
+            </td>
+
+            <td th:text="${product.price}"></td>
+            <td th:text="${product.quantity}"></td>
+
+            <td>
+                <span th:if="${product.available}" class="badge available">Available</span>
+                <span th:unless="${product.available}" class="badge out">Out of stock</span>
+            </td>
+
+            
+
+            <td>
+                <a class="btn btn-light"
+                    th:href="@{/products/{id}(id=${product.id})}">
+                        Detail
+                </a>
+                
+                <a th:if="${session.role == 'ADMIN'}"
+                    class="btn btn-edit"
+                    th:href="@{/products/edit/{id}(id=${product.id})}">
+                        Edit
+                </a>
+
+                <a th:if="${session.role == 'ADMIN'}"
+                    class="btn btn-delete"
+                    th:href="@{/products/delete/{id}(id=${product.id})}"
+                    onclick="return confirm('Are you sure you want to delete this product?')">
+                        Delete
+                </a>
+
+                <a th:if="${session.role == 'USER' and product.available}"
+                    class="btn btn-primary"
+                    th:href="@{/cart/add/{id}(id=${product.id})}">
+                    Add to Cart
+                </a>
+
+                <span th:if="${session.role == 'USER' and !product.available}">
+                    Out of stock
+                </span>
+
+                <span th:if="${session.fullName == null}">
+                    Login to buy
+                </span>
+            </td>
+        </tr>
+
+        <tr th:if="${#lists.isEmpty(products)}">
+            <td colspan="9" class="empty">No products found.</td>
+        </tr>
+        </tbody>
+    </table>
+
+</div>
+
+</body>
+</html>
