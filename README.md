@@ -448,10 +448,8 @@ This project includes basic security features:
 ### Step 1: Clone the repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/auto-parts-ecommerce.git
+git clone https://github.com/phucan08/auto-parts-ecommerce.git
 ```
-
-Replace `YOUR_USERNAME` with your GitHub username.
 
 ### Step 2: Open the project
 
